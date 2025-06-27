@@ -1,0 +1,3 @@
+interface ServerRequestMap {
+    '/greet': null;
+}

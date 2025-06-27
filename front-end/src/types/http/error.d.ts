@@ -1,0 +1,1 @@
+type PostError = TypeError | Error | DOMException;
