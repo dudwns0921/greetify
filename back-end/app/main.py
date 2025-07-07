@@ -13,4 +13,4 @@ app = FastAPI(
 setup_middleware(app)
 
 # 라우터 등록
-app.include_router(api_router, prefix="/api")
+app.include_router(api_router, prefix="/api/v1")

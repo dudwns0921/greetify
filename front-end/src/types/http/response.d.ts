@@ -1,5 +1,5 @@
-interface ServerResponseMap {
-    '/greet': {
-        message: string;
+export interface ServerResponseMap {
+    '/greet-from-image': {
+        gender: string;
     };
 }
