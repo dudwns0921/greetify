@@ -1,0 +1,112 @@
+.container {
+  background: #fff;
+  box-shadow: 0 4px 24px 0 rgba(79,195,247,0.10);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 340px;
+}
+
+.messageWrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.messageShow {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #039be5;
+  will-change: opacity, transform;
+  animation: messageDown 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes messageDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.messageHide {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #039be5;
+  will-change: opacity, transform;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.input {
+  border: 1px solid #b3e5fc;
+  padding: 12px 16px;
+  background: #fafdff;
+  color: #222;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 8px #e3f7ff;
+}
+
+.button {
+  background: #4fc3f7;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 0;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 12px rgba(79, 195, 247, 0.10);
+}
+.button:disabled {
+  background: #b3e5fc;
+  cursor: not-allowed;
+}
+.button:not(:disabled):hover {
+  background: #039be5;
+}
+
+.result {
+  margin-top: 28px;
+  font-size: 1.2rem;
+  color: #039be5;
+  font-weight: 600;
+  text-shadow: 0 1px 6px #e3f7ff;
+}
+
+.error {
+  margin-top: 20px;
+  color: #e74c3c;
+  font-weight: 500;
+  font-size: 1rem;
+} 

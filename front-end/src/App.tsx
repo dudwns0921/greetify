@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useUpload from './hooks/useUpload';
-import type { ServerResponseMap } from './types/http/response';
+import useAnimatedMessages from './hooks/useAnimatedMessages';
+import styles from './App.module.css';
+
+const defaultMessages: string[] = [
+  '안녕하세요?',
+  '제게 인사를 건네주세요'
+];
 
 const App: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [gender, setGender] = useState<string | null>(null);
-  const { error, isLoading, upload } = useUpload<"/greet-from-image">('/greet-from-image');
+  const [file, setFile] = React.useState<File | null>(null);
+  const [gender, setGender] = React.useState<string | null>(null);
+  const { error, isLoading, upload, response } = useUpload('/greet-from-image');
+
+  // 메시지 애니메이션 훅 사용
+  const {
+    showMessage,
+    currentMessage
+  } = useAnimatedMessages(defaultMessages);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -29,21 +41,35 @@ const App: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '40px auto', padding: 20, border: '1px solid #ddd', borderRadius: 8 }}>
-      <h2>성별 예측 이미지 업로드</h2>
+    <div className={styles.container}>
+      {/* 애니메이션 메시지 */}
+      <div className={styles.messageWrapper}>
+        <div className={showMessage ? styles.messageShow : styles.messageHide}>
+          {currentMessage}
+        </div>
+      </div>
+      {/* 기존 폼 - 스타일 제거 */}
       <form onSubmit={handleSubmit}>
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        <button type="submit" disabled={!file || isLoading} style={{ marginLeft: 10 }}>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+        <button
+          type="submit"
+          disabled={!file || isLoading}
+        >
           {isLoading ? '분석 중...' : '업로드 및 분석'}
         </button>
       </form>
-      {gender && (
-        <div style={{ marginTop: 20, fontSize: 18 }}>
-          예측된 성별: <b>{gender}</b>
+      {gender && response && (
+        <div className={styles.result}>
+          예측된 성별: <b>{gender}</b><br />
+          예측된 나이대: <b>{response.age_group}</b>
         </div>
       )}
       {error && (
-        <div style={{ marginTop: 20, color: 'red' }}>{error.message}</div>
+        <div className={styles.error}>{error.message}</div>
       )}
     </div>
   );

@@ -1,33 +1,25 @@
 import { getServerUrl } from '@/util/server';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import type { ServerResponseMap } from '@/types/http/response';
 
 const useUpload = <T extends keyof ServerResponseMap>(url: T) => {
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<ServerResponseMap[T] | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  const abortRequest = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-  };
 
   const upload = async (formData: FormData): Promise<ServerResponseMap[T]> => {
     setError(null);
     setIsLoading(true);
     setResponse(null);
-    abortControllerRef.current = new AbortController();
     try {
       const res = await fetch(`${getServerUrl()}${url}`, {
         method: 'POST',
-        body: formData,
-        signal: abortControllerRef.current.signal,
+        body: formData
       });
       const data = (await res.json()) as ServerResponseMap[T];
       if (!res.ok) {
-        throw new Error((data as any).detail || `HTTP error! status: ${res.status}`);
+        const detail = (data as { detail?: string }).detail;
+        throw new Error(detail || `HTTP error! status: ${res.status}`);
       }
       setResponse(data);
       return data;
@@ -39,7 +31,7 @@ const useUpload = <T extends keyof ServerResponseMap>(url: T) => {
     }
   };
 
-  return { error, isLoading, response, upload, abortRequest };
+  return { error, isLoading, response, upload };
 };
 
 export default useUpload; 
