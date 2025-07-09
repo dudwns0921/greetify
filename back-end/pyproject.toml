@@ -3,11 +3,14 @@ name = "back-end"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "fastapi[standard]>=0.115.14",
     "pydantic-settings>=2.10.1",
     "numpy (==2.1.0)",
     "pillow (>=11.3.0,<12.0.0)",
     "tensorflow (>=2.19.0,<3.0.0)",
+    "langchain (>=0.3.26,<0.4.0)",
+    "openai (>=1.93.2,<2.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
 ]
