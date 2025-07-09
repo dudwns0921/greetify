@@ -27,7 +27,6 @@ export default function useAnimatedMessages(initialMessages: string[]) {
     setShowMessage(false);
     setTimeout(() => {
       setMessageList(messages);
-      setMessageIndex(0);
       setShowMessage(true);
     }, 300);
   };

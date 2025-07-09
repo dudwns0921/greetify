@@ -1,7 +1,9 @@
 import React from 'react';
-import useUpload from './hooks/useUpload';
 import useAnimatedMessages from './hooks/useAnimatedMessages';
 import styles from './App.module.css';
+import useSpeechRecognition from './hooks/useSpeechRecognition';
+import VoiceButton from './components/VoiceButton';
+import usePost from './hooks/usePost';
 
 const defaultMessages: string[] = [
   '안녕하세요?',
@@ -9,36 +11,27 @@ const defaultMessages: string[] = [
 ];
 
 const App: React.FC = () => {
-  const [file, setFile] = React.useState<File | null>(null);
-  const [gender, setGender] = React.useState<string | null>(null);
-  const { error, isLoading, upload, response } = useUpload('/greet-from-image');
-
-  // 메시지 애니메이션 훅 사용
   const {
     showMessage,
-    currentMessage
+    currentMessage,
+    setAnimatedMessages
   } = useAnimatedMessages(defaultMessages);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      setGender(null);
+  // usePost 훅으로 /greet-from-text POST 요청 준비
+  const { post } = usePost('/greet-from-text');
+
+  // 음성 인식 결과를 받아서 /greet-from-text로 전송
+  const handleSpeechResult = async (text: string) => {
+    const response = await post({ text });
+    if(response.is_greeting) {
+      setAnimatedMessages(['저에게 인사를 해주셨군요!', '이제 당신의 모습을 사진으로 담을게요!'])
+    } else {
+      setAnimatedMessages(response.reason.split('.'))
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file) return;
-    setGender(null);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const data = await upload(formData);
-      setGender(data.gender);
-    } catch {
-      setGender(null);
-    }
-  };
+  // 음성 인식 훅 사용 (콜백 전달)
+  const { recognizing, start, supported } = useSpeechRecognition(handleSpeechResult);
 
   return (
     <div className={styles.container}>
@@ -48,29 +41,7 @@ const App: React.FC = () => {
           {currentMessage}
         </div>
       </div>
-      {/* 기존 폼 - 스타일 제거 */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <button
-          type="submit"
-          disabled={!file || isLoading}
-        >
-          {isLoading ? '분석 중...' : '업로드 및 분석'}
-        </button>
-      </form>
-      {gender && response && (
-        <div className={styles.result}>
-          예측된 성별: <b>{gender}</b><br />
-          예측된 나이대: <b>{response.age_group}</b>
-        </div>
-      )}
-      {error && (
-        <div className={styles.error}>{error.message}</div>
-      )}
+      <VoiceButton recognizing={recognizing} onClick={start} supported={supported} />
     </div>
   );
 };

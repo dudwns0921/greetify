@@ -1,0 +1,33 @@
+.voiceButton {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  z-index: 100;
+  background: #4fc3f7;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px 0 rgba(79, 195, 247, 0.18), 0 1.5px 6px 0 rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0;
+}
+.voiceButton:hover {
+  background: #039be5;
+}
+.voiceButton:disabled {
+  cursor: not-allowed;
+  background: #ff1744;
+}
+.blinkingMic {
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+} 
