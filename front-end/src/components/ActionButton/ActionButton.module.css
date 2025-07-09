@@ -1,4 +1,5 @@
-.voiceButton {
+/* ActionButton, MicButton, CameraButton에서 공통 사용 */
+.actionButton {
   position: fixed;
   right: 32px;
   bottom: 32px;
@@ -17,14 +18,14 @@
   transition: background 0.2s;
   padding: 0;
 }
-.voiceButton:hover {
+.actionButton:hover {
   background: #039be5;
 }
-.voiceButton:disabled {
+.actionButton:disabled {
   cursor: not-allowed;
   background: #ff1744;
 }
-.blinkingMic {
+.blinkingAction {
   animation: blink 1s infinite;
 }
 @keyframes blink {
