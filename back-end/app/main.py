@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.core.config import settings
-from app.core.middleware import setup_middleware
+from app.core.config.config import settings
+from app.core.middleware.middleware import setup_middleware
 from app.api.api import api_router
 from app.core.database.db import init_db
 

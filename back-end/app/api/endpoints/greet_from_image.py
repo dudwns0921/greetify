@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import os
 import logging
-from app.core.response import BaseResponse
+from app.core.response.response import BaseResponse
 
 router = APIRouter()
 

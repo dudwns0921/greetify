@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from app.core.database.db import save_location
-from app.core.response import BaseResponse
+from app.core.response.response import BaseResponse
 
 router = APIRouter()
 

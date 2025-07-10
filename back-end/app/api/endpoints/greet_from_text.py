@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.core.greet.judge import greet_graph, GreetState
-from app.core.response import BaseResponse
+from app.core.response.response import BaseResponse
 
 router = APIRouter()
 

@@ -2,6 +2,7 @@ from fastapi import APIRouter
 import pkgutil
 import importlib
 from app.api import endpoints
+from app.core.response.response import BaseResponse
 
 api_router = APIRouter()
 
