@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useAnimatedMessages from './hooks/useAnimatedMessages';
 import styles from './App.module.css';
 import useSpeechRecognition from './hooks/useSpeechRecognition';
@@ -19,6 +19,23 @@ const App: React.FC = () => {
 
   // usePost 훅으로 /greet-from-text POST 요청 준비
   const { post } = usePost('/greet-from-text');
+  const { post: postLocation } = usePost('/save-current-location');
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        postLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      (error) => {
+        // 위치 정보 획득 실패 시 처리 (옵션)
+        console.error('위치 정보 획득 실패:', error);
+      }
+    );
+  }, []);
 
   // 음성 인식 결과를 받아서 /greet-from-text로 전송
   const handleSpeechResult = async (text: string) => {

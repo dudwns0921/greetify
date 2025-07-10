@@ -7,4 +7,8 @@ export interface ServerResponseMap {
         is_greeting: boolean;
         reason: string;
     };
+    '/save-current-location': {
+        status: string;
+        data: null;
+    };
 }
