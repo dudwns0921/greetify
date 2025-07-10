@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useAnimatedMessages from './hooks/useAnimatedMessages';
 import styles from './App.module.css';
 import useSpeechRecognition from './hooks/useSpeechRecognition';
@@ -24,6 +24,23 @@ const App: React.FC = () => {
 
   // usePost 훅으로 /greet-from-text POST 요청 준비
   const { post } = usePost('/greet-from-text');
+  const { post: postLocation } = usePost('/save-current-location');
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        postLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      (error) => {
+        // 위치 정보 획득 실패 시 처리 (옵션)
+        console.error('위치 정보 획득 실패:', error);
+      }
+    );
+  }, []);
 
   // 카운트다운 메시지와 플래시 상태 추가
   const [isFlash, setIsFlash] = useState(false);
@@ -35,12 +52,11 @@ const App: React.FC = () => {
   // 음성 인식 결과를 받아서 /greet-from-text로 전송
   const handleSpeechResult = async (text: string) => {
     const response = await post({ text });
-    if(response.is_greeting) {
-      setAnimatedMessages(GREETING_MESSAGES);
-      setIsGreeting(true); // 인사 감지 시 true로 변경
+    setIsGreeting(response.data.is_greeting)
+    if(response.data.is_greeting) {
+      setAnimatedMessages(GREETING_MESSAGES)
     } else {
-      setAnimatedMessages(response.reason.split('.'));
-      setIsGreeting(false); // 인사가 아니면 false로 변경
+      setAnimatedMessages(response.data.reason.split('.'))
     }
   };
 
