@@ -49,7 +49,7 @@ pip install poetry
 cd back-end
 poetry install
 poetry shell
-uvicorn app.main:app --reload
+poetry run uvicorn app.main:app --reload
 ```
 
 ### 2. 프론트엔드(React) 실행
