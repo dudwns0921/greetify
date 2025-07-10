@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import os
 import logging
+from app.core.response import BaseResponse
 
 router = APIRouter()
 
@@ -53,4 +54,4 @@ async def greet_from_image(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"이미지 처리 오류: {str(e)}")
 
-    return {"gender": gender, "age_group": age_group} 
+    return BaseResponse(status="success", data={"gender": gender, "age_group": age_group}) 

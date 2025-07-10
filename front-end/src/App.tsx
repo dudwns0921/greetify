@@ -40,10 +40,10 @@ const App: React.FC = () => {
   // 음성 인식 결과를 받아서 /greet-from-text로 전송
   const handleSpeechResult = async (text: string) => {
     const response = await post({ text });
-    if(response.is_greeting) {
+    if(response.data.is_greeting) {
       setAnimatedMessages(['저에게 인사를 해주셨군요!', '이제 당신의 모습을 사진으로 담을게요!'])
     } else {
-      setAnimatedMessages(response.reason.split('.'))
+      setAnimatedMessages(response.data.reason.split('.'))
     }
   };
 
