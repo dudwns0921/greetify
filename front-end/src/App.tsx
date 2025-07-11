@@ -12,6 +12,7 @@ import {
 } from './constants/messages';
 import useAppMount from './hooks/useAppMount';
 import MessagePortal from './components/MessagePortal/MessagePortal';
+import useUpload from './hooks/useUpload';
 
 const App: React.FC = () => {
   // 상태 선언
@@ -24,12 +25,13 @@ const App: React.FC = () => {
   // 훅 선언
   const { post } = usePost('/greet-from-text');
   const { post: postLocation } = usePost('/save-current-location');
+  const { upload: uploadImage } = useUpload('/greet-from-image');
   const {
     showMessage,
     currentMessage,
     pushMessages,
   } = useAnimatedMessages({
-    '셋!': () => {
+    '셋!': async () => {
       setIsFlash(true);
       setTimeout(() => setIsFlash(false), 200);
       setCameraDisabled(false);
@@ -37,7 +39,20 @@ const App: React.FC = () => {
       if (webcamRef.current) {
         const image = webcamRef.current.capture();
         if (image) {
-          console.log('캡처된 이미지:', image);
+          // data:image/jpeg;base64,... -> Blob 변환
+          const blob = await (await fetch(image)).blob();
+          const formData = new FormData();
+          formData.append('file', blob, 'capture.jpg');
+          try {
+            const res = await uploadImage(formData);
+            // 업로드 결과 메시지 처리 (예시)
+            pushMessages([
+              `성별: ${res.data.gender}`,
+              `나이대: ${res.data.age_group}`
+            ]);
+          } catch {
+            pushMessages(['이미지 업로드 실패']);
+          }
         }
       }
       setWebcamOpen(false); // 캡처 후 모달 닫기

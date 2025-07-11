@@ -21,14 +21,14 @@ export default function useAnimatedMessages(
     setShowMessage(true);
     animationTimeoutRef.current = setTimeout(() => {
       setShowMessage(false);
-      // 메시지별 액션 실행
-      if (onMessageActionMap && onMessageActionMap[nextMessage]) {
-        onMessageActionMap[nextMessage]();
-      }
       setIsAnimating(false);
       const hideTimeout = setTimeout(() => {
         if (messageQueueRef.current.length > 0) {
           messageQueueRef.current.shift();
+        }
+        // 메시지별 액션 실행
+        if (onMessageActionMap && onMessageActionMap[nextMessage]) {
+          onMessageActionMap[nextMessage]();
         }
         processNextMessage();
       }, 600);
