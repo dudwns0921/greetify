@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import useAnimatedMessages from './hooks/useAnimatedMessages';
 import styles from './App.module.css';
 import useSpeechRecognition from './hooks/useSpeechRecognition';
 import ActionButton from './components/ActionButton/ActionButton';
 import usePost from './hooks/usePost';
 import Flash from './components/Flash/Flash';
+import WebcamModal, { type WebcamModalHandle } from './components/WebcamModal/WebcamModal';
 import {
   GREETING_MESSAGES,
   COUNTDOWN_MESSAGES
 } from './constants/messages';
 import useAppMount from './hooks/useAppMount';
+import MessagePortal from './components/MessagePortal/MessagePortal';
 
 const App: React.FC = () => {
   // 상태 선언
   const [isFlash, setIsFlash] = useState(false);
   const [cameraDisabled, setCameraDisabled] = useState(false);
   const [isGreeting, setIsGreeting] = useState(false);
+  const [webcamOpen, setWebcamOpen] = useState(false);
+  const webcamRef = useRef<WebcamModalHandle>(null);
 
   // 훅 선언
   const { post } = usePost('/greet-from-text');
@@ -29,6 +33,14 @@ const App: React.FC = () => {
       setIsFlash(true);
       setTimeout(() => setIsFlash(false), 200);
       setCameraDisabled(false);
+      // 캡처 시도
+      if (webcamRef.current) {
+        const image = webcamRef.current.capture();
+        if (image) {
+          console.log('캡처된 이미지:', image);
+        }
+      }
+      setWebcamOpen(false); // 캡처 후 모달 닫기
     }
   });
   useAppMount({ postLocation, pushMessages });
@@ -47,6 +59,7 @@ const App: React.FC = () => {
 
   function handleCameraClick() {
     setCameraDisabled(true);
+    setWebcamOpen(true);
     pushMessages(COUNTDOWN_MESSAGES);
   }
 
@@ -54,11 +67,20 @@ const App: React.FC = () => {
   return (
     <div className={styles.container}>
       {isFlash && <Flash />}
-      <div className={styles.messageWrapper}>
-        <div className={showMessage ? styles.messageShow : styles.messageHide}>
-          {currentMessage}
+      <WebcamModal ref={webcamRef} open={webcamOpen} onClose={() => setWebcamOpen(false)} />
+      <MessagePortal>
+        <div className={styles.messageWrapper}>
+          <div
+            className={
+              showMessage
+                ? `${styles.messageShow} ${webcamOpen ? styles.messageShowCamera : ''}`
+                : `${styles.messageHide} ${webcamOpen ? styles.messageShowCamera : ''}`
+            }
+          >
+            {currentMessage}
+          </div>
         </div>
-      </div>
+      </MessagePortal>
       <ActionButton
         recognizing={recognizing}
         onClick={isGreeting ? handleCameraClick : start}

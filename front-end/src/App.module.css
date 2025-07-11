@@ -49,3 +49,7 @@
   text-shadow: 0 2px 8px #039be5;
   will-change: opacity, transform;
 }
+
+.messageShowCamera {
+  text-shadow: 0 2px 8px #000, 0 0px 2px #000, 0 0px 16px #000;
+}
