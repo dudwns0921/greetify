@@ -6,18 +6,18 @@ import ActionButton from './components/ActionButton/ActionButton';
 import usePost from './hooks/usePost';
 import Flash from './components/Flash/Flash';
 import {
-  DEFAULT_MESSAGES,
   GREETING_MESSAGES,
   LOADING_MESSAGES,
-  COUNTDOWN_MESSAGES
+  COUNTDOWN_MESSAGES,
+  DEFAULT_MESSAGES
 } from './constants/messages';
 
 const App: React.FC = () => {
   const {
     showMessage,
     currentMessage,
-    setAnimatedMessages
-  } = useAnimatedMessages(DEFAULT_MESSAGES);
+    pushMessages,
+  } = useAnimatedMessages();
 
   // isGreeting 상태 추가
   const [isGreeting, setIsGreeting] = useState(false);
@@ -40,6 +40,7 @@ const App: React.FC = () => {
         console.error('위치 정보 획득 실패:', error);
       }
     );
+      pushMessages(DEFAULT_MESSAGES);
   }, []);
 
   // 카운트다운 메시지와 플래시 상태 추가
@@ -54,9 +55,9 @@ const App: React.FC = () => {
     const response = await post({ text });
     setIsGreeting(response.data.is_greeting)
     if(response.data.is_greeting) {
-      setAnimatedMessages(GREETING_MESSAGES)
+      pushMessages(GREETING_MESSAGES)
     } else {
-      setAnimatedMessages(response.data.reason.split('.'))
+      pushMessages(response.data.reason.split('.'))
     }
   };
 
@@ -71,12 +72,12 @@ const App: React.FC = () => {
       clearTimeout(flashTimerRef.current);
       flashTimerRef.current = null;
     }
-    setAnimatedMessages(COUNTDOWN_MESSAGES);
+    pushMessages(COUNTDOWN_MESSAGES);
     cameraTimerRef.current = setTimeout(() => {
       setIsFlash(true);
       flashTimerRef.current = setTimeout(() => {
         setIsFlash(false);
-        setAnimatedMessages(LOADING_MESSAGES);
+        pushMessages(LOADING_MESSAGES);
       }, 200);
     }, 5400);
   };
