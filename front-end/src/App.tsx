@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import useAnimatedMessages from './hooks/useAnimatedMessages';
 import styles from './App.module.css';
 import useSpeechRecognition from './hooks/useSpeechRecognition';
@@ -7,17 +7,26 @@ import usePost from './hooks/usePost';
 import Flash from './components/Flash/Flash';
 import {
   GREETING_MESSAGES,
-  LOADING_MESSAGES,
   COUNTDOWN_MESSAGES,
   DEFAULT_MESSAGES
 } from './constants/messages';
 
 const App: React.FC = () => {
+  const [isFlash, setIsFlash] = useState(false);
+  const [cameraDisabled, setCameraDisabled] = useState(false);
+
+  // useAnimatedMessages에 플래시 트리거 콜백 및 카메라 활성화 콜백 전달
   const {
     showMessage,
     currentMessage,
     pushMessages,
-  } = useAnimatedMessages();
+  } = useAnimatedMessages({
+    '셋!': () => {
+      setIsFlash(true);
+      setTimeout(() => setIsFlash(false), 200);
+      setCameraDisabled(false); // 셋! 시점에 다시 활성화
+    }
+  });
 
   // isGreeting 상태 추가
   const [isGreeting, setIsGreeting] = useState(false);
@@ -43,13 +52,6 @@ const App: React.FC = () => {
       pushMessages(DEFAULT_MESSAGES);
   }, []);
 
-  // 카운트다운 메시지와 플래시 상태 추가
-  const [isFlash, setIsFlash] = useState(false);
-
-  // 플래시 및 카운트다운 타이머 관리용 ref 추가
-  const cameraTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const flashTimerRef = useRef<NodeJS.Timeout | null>(null);
-
   // 음성 인식 결과를 받아서 /greet-from-text로 전송
   const handleSpeechResult = async (text: string) => {
     const response = await post({ text });
@@ -63,23 +65,8 @@ const App: React.FC = () => {
 
   // 카메라 버튼 클릭 시 동작
   const handleCameraClick = () => {
-    // 기존 타이머가 있으면 삭제
-    if (cameraTimerRef.current) {
-      clearTimeout(cameraTimerRef.current);
-      cameraTimerRef.current = null;
-    }
-    if (flashTimerRef.current) {
-      clearTimeout(flashTimerRef.current);
-      flashTimerRef.current = null;
-    }
+    setCameraDisabled(true);
     pushMessages(COUNTDOWN_MESSAGES);
-    cameraTimerRef.current = setTimeout(() => {
-      setIsFlash(true);
-      flashTimerRef.current = setTimeout(() => {
-        setIsFlash(false);
-        pushMessages(LOADING_MESSAGES);
-      }, 200);
-    }, 5400);
   };
 
   // 음성 인식 훅 사용 (콜백 전달)
@@ -100,6 +87,7 @@ const App: React.FC = () => {
         onClick={isGreeting ? handleCameraClick : start}
         supported={supported}
         isGreeting={isGreeting}
+        disabled={cameraDisabled}
       />
     </div>
   );

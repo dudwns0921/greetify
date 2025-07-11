@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 
-export default function useAnimatedMessages() {
+export default function useAnimatedMessages(
+  onMessageActionMap?: { [message: string]: () => void }
+) {
   const [currentMessage, setCurrentMessage] = useState<string>('');
   const [showMessage, setShowMessage] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -13,11 +15,16 @@ export default function useAnimatedMessages() {
     const currentQueue = messageQueueRef.current;
     if (currentQueue.length === 0) return;
     const nextMessage = currentQueue[0];
+
     setIsAnimating(true);
     setCurrentMessage(nextMessage);
     setShowMessage(true);
     animationTimeoutRef.current = setTimeout(() => {
       setShowMessage(false);
+      // 메시지별 액션 실행
+      if (onMessageActionMap && onMessageActionMap[nextMessage]) {
+        onMessageActionMap[nextMessage]();
+      }
       setIsAnimating(false);
       const hideTimeout = setTimeout(() => {
         if (messageQueueRef.current.length > 0) {
