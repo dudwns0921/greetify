@@ -11,7 +11,7 @@ def safe_merge(prev, new):
     return {**prev, **(new or {})}
 
 
-def build_greet_graph(model_gender, model_age, weather_api_key):
+def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key):
     graph = StateGraph(state_schema=dict)
     graph.add_node(
         "predict",
@@ -21,6 +21,7 @@ def build_greet_graph(model_gender, model_age, weather_api_key):
                     "image_arr": image_arr,
                     "model_gender": model_gender,
                     "model_age": model_age,
+                    "model_emotion": model_emotion,
                 }
             }
         ),
@@ -62,6 +63,7 @@ def build_greet_graph(model_gender, model_age, weather_api_key):
                     "weather_info": prev.get("weather_info", ""),
                     "temp": prev.get("temp", 0),
                     "location": prev.get("location"),
+                    "emotion": prev.get("emotion"),
                 }
             }
         ),
