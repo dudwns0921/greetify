@@ -11,6 +11,19 @@ def safe_merge(prev, new):
     return {**prev, **(new or {})}
 
 
+def print_arguments(state):
+    """greeting 노드로 전달되는 모든 인자들을 출력하는 함수"""
+    print("=== Greeting 노드로 전달되는 인자들 ===")
+    print(f"gender: {state.get('gender', 'N/A')}")
+    print(f"age_group: {state.get('age_group', 'N/A')}")
+    print(f"weather_info: {state.get('weather_info', 'N/A')}")
+    print(f"temp: {state.get('temp', 'N/A')}")
+    print(f"location: {state.get('location', 'N/A')}")
+    print(f"emotion: {state.get('emotion', 'N/A')}")
+    print("=====================================")
+    return state
+
+
 def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key):
     graph = StateGraph(state_schema=dict)
     graph.add_node(
@@ -48,9 +61,9 @@ def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key):
         ),
     )
 
-    # weather 노드 결과를 콘솔로 출력
     graph.add_node(
-        "print_weather", lambda prev: print(f"날씨 노드 결과: {prev}") or prev
+        "print_arguments",
+        print_arguments,
     )
 
     graph.add_node(
@@ -71,7 +84,7 @@ def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key):
 
     graph.add_edge("predict", "location")
     graph.add_edge("location", "weather")
-    graph.add_edge("weather", "print_weather")
-    graph.add_edge("print_weather", "greeting")
+    graph.add_edge("weather", "print_arguments")
+    graph.add_edge("print_arguments", "greeting")
     graph.set_entry_point("predict")
     return graph.compile()

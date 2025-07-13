@@ -33,7 +33,6 @@ def get_weather_tool(inputs: dict):
     lon = inputs["lon"]
     api_key = inputs["api_key"]
     result = get_weather(lat, lon, api_key)
-    print(f"get_weather_tool 결과: {result}")
     return result
 
 

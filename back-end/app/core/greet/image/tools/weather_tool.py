@@ -8,5 +8,8 @@ def get_weather(lat, lon, api_key):
         data = resp.json()
         weather = data["weather"][0]["description"]
         temp = data["main"]["temp"]
-        return {"weather_info": weather, "temp": temp}
+        city_name = data["name"]
+        country = data["sys"]["country"]
+        location = f"{city_name}, {country}"
+        return {"weather_info": weather, "temp": temp, "location": location}
     return None
