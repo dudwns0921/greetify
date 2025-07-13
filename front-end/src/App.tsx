@@ -46,10 +46,7 @@ const App: React.FC = () => {
           try {
             const res = await uploadImage(formData);
             // 업로드 결과 메시지 처리 (예시)
-            pushMessages([
-              `성별: ${res.data.gender}`,
-              `나이대: ${res.data.age_group}`
-            ]);
+            pushMessages(res.data.split('.'));
           } catch {
             pushMessages(['이미지 업로드 실패']);
           }

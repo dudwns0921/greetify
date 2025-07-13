@@ -4,10 +4,7 @@ export interface BaseResponse<T> {
 }
 
 export interface ServerResponseMap {
-    '/greet-from-image': BaseResponse<{
-        gender: string;
-        age_group: string;
-    }>;
+    '/greet-from-image': BaseResponse<string>;
     '/greet-from-text': BaseResponse<{
         is_greeting: boolean;
         reason: string;
