@@ -13,6 +13,7 @@ import {
 import useAppMount from './hooks/useAppMount';
 import MessagePortal from './components/MessagePortal/MessagePortal';
 import useUpload from './hooks/useUpload';
+import playCameraShutter from './util/playCameraShutter';
 
 const App: React.FC = () => {
   // 상태 선언
@@ -32,7 +33,9 @@ const App: React.FC = () => {
     pushMessages,
   } = useAnimatedMessages({
     '셋!': async () => {
+      
       setIsFlash(true);
+      playCameraShutter();
       setTimeout(() => setIsFlash(false), 200);
       setCameraDisabled(false);
       // 캡처 시도
