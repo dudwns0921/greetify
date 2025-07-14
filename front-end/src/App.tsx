@@ -46,7 +46,7 @@ const App: React.FC = () => {
           try {
             const res = await uploadImage(formData);
             // 업로드 결과 메시지 처리 (예시)
-            pushMessages(res.data);
+            pushMessages(res.data.filter(msg => msg.trim() !== ''));
           } catch {
             pushMessages(['이미지 업로드 실패']);
           }

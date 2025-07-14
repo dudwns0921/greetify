@@ -31,9 +31,9 @@ export default function useAnimatedMessages(
           onMessageActionMap[nextMessage]();
         }
         processNextMessage();
-      }, 600);
+      }, 800);
       return () => clearTimeout(hideTimeout);
-    }, 1200);
+    }, 1600);
   };
 
   // 컴포넌트 언마운트 시 타이머 정리
