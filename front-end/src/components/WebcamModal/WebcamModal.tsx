@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle } from 'react';
+import { useRef, forwardRef, useImperativeHandle } from 'react';
 import Webcam from 'react-webcam';
 import styles from './WebcamModal.module.css';
 
