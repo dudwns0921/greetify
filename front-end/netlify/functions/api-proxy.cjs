@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  // '/.netlify/functions/api-proxy' 또는 '/api'를 제거
   let path = event.path;
   if (path.startsWith('/.netlify/functions/api-proxy')) {
     path = path.replace('/.netlify/functions/api-proxy', '');
@@ -11,13 +10,23 @@ exports.handler = async (event) => {
   const url = `http://158.179.167.189:8000/api/v1${path}`;
   console.log('프록시 요청 URL:', url);
 
+  // Content-Length, host 등 일부 헤더는 제거
+  const { host, ...headers } = event.headers;
+
+  // body가 base64로 올 수 있으니 처리
+  const isBase64Encoded = event.isBase64Encoded;
+  let body = event.body;
+  if (isBase64Encoded && body) {
+    body = Buffer.from(body, 'base64');
+  }
+
   const response = await fetch(url, {
     method: event.httpMethod,
-    headers: { ...event.headers, host: undefined },
-    body: event.body,
+    headers,
+    body: body && body.length > 0 ? body : undefined,
   });
 
-  const body = await response.text();
+  const resBody = await response.text();
 
   return {
     statusCode: response.status,
@@ -25,6 +34,6 @@ exports.handler = async (event) => {
       'Content-Type': response.headers.get('content-type') || 'text/plain',
       'Access-Control-Allow-Origin': '*',
     },
-    body,
+    body: resBody,
   };
 }; 
