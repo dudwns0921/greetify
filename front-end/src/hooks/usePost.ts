@@ -13,11 +13,16 @@ const usePost = <T extends keyof ServerResponseMap>(url: T) => {
     setIsLoading(true);
     setResponse(null);
     try {
+      const sessionId = localStorage.getItem('session_id');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (sessionId) {
+        headers['X-Session-Id'] = sessionId;
+      }
       const res = await fetch(`${getServerUrl()}${url}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify(body)
       });
       const data = (await res.json()) as ServerResponseMap[T];

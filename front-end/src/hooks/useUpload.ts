@@ -12,8 +12,14 @@ const useUpload = <T extends keyof ServerResponseMap>(url: T) => {
     setIsLoading(true);
     setResponse(null);
     try {
+      const sessionId = localStorage.getItem('session_id');
+      const headers: Record<string, string> = {};
+      if (sessionId) {
+        headers['X-Session-Id'] = sessionId;
+      }
       const res = await fetch(`${getServerUrl()}${url}`, {
         method: 'POST',
+        headers,
         body: formData
       });
       const data = (await res.json()) as ServerResponseMap[T];

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
@@ -57,7 +57,8 @@ def preprocess_image(image_bytes):
 
 
 @router.post("/greet-from-image")
-async def greet_from_image(file: UploadFile = File(...)):
+async def greet_from_image(request: Request, file: UploadFile = File(...)):
+    session_id = request.headers.get("x-session-id")
     if not model_gender or not model_age or not model_emotion:
         raise HTTPException(status_code=500, detail="모델이 로드되지 않았습니다.")
     try:
@@ -68,6 +69,7 @@ async def greet_from_image(file: UploadFile = File(...)):
             model_age,
             model_emotion,
             weather_api_key=os.getenv("OPEN_WEATHER_API_KEY"),
+            session_id=session_id
         )
         result = app.invoke(arr)
         return BaseResponse(status="success", data=result)

@@ -9,5 +9,5 @@ export interface ServerResponseMap {
         is_greeting: boolean;
         reason: string;
     }>;
-    '/save-current-location': BaseResponse<null>;
+    '/save-current-location': BaseResponse<{ session_id: string }>;
 }

@@ -13,7 +13,7 @@ def init_db():
     conn.execute(
         '''
         CREATE TABLE IF NOT EXISTS locations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXT PRIMARY KEY,
             latitude REAL NOT NULL,
             longitude REAL NOT NULL
         )
@@ -22,11 +22,15 @@ def init_db():
     conn.commit()
     conn.close()
 
-def save_location(latitude: float, longitude: float):
+def save_location(session_id: str, latitude: float, longitude: float):
     conn = get_db_connection()
     conn.execute(
-        'INSERT INTO locations (latitude, longitude) VALUES (?, ?)',
-        (latitude, longitude)
+        '''
+        INSERT INTO locations (id, latitude, longitude)
+        VALUES (?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET latitude=excluded.latitude, longitude=excluded.longitude
+        ''',
+        (session_id, latitude, longitude)
     )
     conn.commit()
     conn.close() 

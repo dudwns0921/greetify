@@ -22,7 +22,8 @@ def predict_gender_age_tool(inputs: dict):
 @tool
 def get_latest_location_tool(inputs: dict):
     """DB에서 최신 위도, 경도 위치를 조회합니다."""
-    lat, lon = get_latest_location()
+    session_id = inputs.get("session_id")
+    lat, lon = get_latest_location(session_id)
     return {"lat": lat, "lon": lon}
 
 

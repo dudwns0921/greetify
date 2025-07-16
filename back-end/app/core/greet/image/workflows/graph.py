@@ -24,7 +24,7 @@ def print_arguments(state):
     return state
 
 
-def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key):
+def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key, session_id):
     graph = StateGraph(state_schema=dict)
     graph.add_node(
         "predict",
@@ -42,7 +42,7 @@ def build_greet_graph(model_gender, model_age, model_emotion, weather_api_key):
 
     graph.add_node(
         "location",
-        lambda prev: safe_merge(prev, get_latest_location_tool({"inputs": {}})),
+        lambda prev: safe_merge(prev, get_latest_location_tool({"inputs": {"session_id": session_id}})),
     )
 
     graph.add_node(

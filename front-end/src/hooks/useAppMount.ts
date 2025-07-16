@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { DEFAULT_MESSAGES } from '../constants/messages';
 
 interface UseAppMountProps {
-  postLocation: (data: { latitude: number; longitude: number }) => void;
+  postLocation: (data: { latitude: number; longitude: number }) => Promise<{ status: string; data: { session_id: string } }>;
   pushMessages: (messages: string[]) => void;
 }
 
@@ -13,11 +13,14 @@ const useAppMount = ({ postLocation, pushMessages }: UseAppMountProps) => {
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        postLocation({
+      async (position) => {
+        const res = await postLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         });
+        if (res?.data?.session_id) {
+          localStorage.setItem('session_id', res.data.session_id);
+        }
         pushMessages(DEFAULT_MESSAGES);
       },
       (error) => {
