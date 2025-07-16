@@ -43,11 +43,13 @@ greetify/
 ### 1. 백엔드(FastAPI) 실행
 
 ```bash
+# poetry가 없다면 먼저 설치
+pip install poetry
+
 cd back-end
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt  # 또는 pyproject.toml 참고
-uvicorn app.main:app --reload
+poetry install
+poetry shell
+poetry run uvicorn app.main:app --reload
 ```
 
 ### 2. 프론트엔드(React) 실행

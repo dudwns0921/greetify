@@ -1,3 +1,6 @@
 export const getServerUrl = () => {
-    return 'http://localhost:8000/api/v1';
+    if (import.meta.env.DEV) {
+        return 'http://localhost:8000/api/v1';
+    }
+    return '/api';
 }

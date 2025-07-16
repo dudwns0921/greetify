@@ -1,50 +1,46 @@
 import { getServerUrl } from '@/util/server';
-import { checkPostError } from '@/util/types/error';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import type { ServerResponseMap } from '@/types/http/response';
+import type { ServerRequestMap } from '@/types/http/request';
 
 const usePost = <T extends keyof ServerResponseMap>(url: T) => {
-    const [error, setError] = useState<PostError | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [response, setResponse] = useState<ServerResponseMap[T] | null>(null);
 
-    const abortControllerRef = useRef<AbortController | null>(null);
+  const post = async (body: ServerRequestMap[T]): Promise<ServerResponseMap[T]> => {
+    setError(null);
+    setIsLoading(true);
+    setResponse(null);
+    try {
+      const sessionId = localStorage.getItem('session_id');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (sessionId) {
+        headers['X-Session-Id'] = sessionId;
+      }
+      const res = await fetch(`${getServerUrl()}${url}`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body)
+      });
+      const data = (await res.json()) as ServerResponseMap[T];
+      if (!res.ok) {
+        const detail = (data as { detail?: string }).detail;
+        throw new Error(detail || `HTTP error! status: ${res.status}`);
+      }
+      setResponse(data);
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('알 수 없는 오류'));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const abortRequest = () => {
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
-    };
-
-    const post = async (body: ServerRequestMap[T]) => {
-        if (error) setError(null);
-        setIsLoading(true);
-        abortControllerRef.current = new AbortController();
-        try {
-            const res = await fetch(`${getServerUrl()}${url}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body),
-                signal: abortControllerRef.current.signal,
-            });
-            const data = (await res.json()) as ServerResponseMap[T];
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            return data;
-        } catch (error) {
-            console.error(error);
-            if (checkPostError(error)) {
-                setError(error);
-            } else {
-                setError(new Error('An unknown error occurred'));
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return { error, isLoading, post, abortRequest };
+  return { error, isLoading, response, post };
 };
 
-export default usePost;
+export default usePost; 
