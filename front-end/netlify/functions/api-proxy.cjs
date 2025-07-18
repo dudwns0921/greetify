@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const SERVER_URL = 'http://158.179.167.189/greetify';
+const SERVER_URL = 'http://158.179.167.189/greetify/api/v1';
 
 exports.handler = async (event) => {
   let path = event.path;
