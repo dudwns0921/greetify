@@ -16,6 +16,7 @@ import useUpload from './hooks/useUpload';
 import playCameraShutter from './util/playCameraShutter';
 import Loading from './components/Loading/Loading';
 import { useLoading } from './hooks/useLoading';
+import DevMenu from './components/DevMenu/DevMenu';
 
 const App: React.FC = () => {
   // 상태 선언
@@ -84,6 +85,7 @@ const App: React.FC = () => {
   // 렌더링
   return (
     <div className={styles.container}>
+      {import.meta.env.DEV && (<DevMenu handleSpeechResult={handleSpeechResult} />)}
       {loading && <Loading />}
       {isFlash && <Flash />}
       <WebcamModal ref={webcamRef} open={webcamOpen} onClose={() => setWebcamOpen(false)} />
