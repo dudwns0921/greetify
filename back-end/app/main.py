@@ -4,7 +4,12 @@ from app.core.middleware.middleware import setup_middleware
 from app.api.api import api_router
 from app.core.database.db import init_db
 
-app = FastAPI(title=settings.app_name, version=settings.version, debug=settings.debug)
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.version,
+    debug=settings.debug,
+    root_path="/greetify"  # <-- 추가
+)
 
 # 미들웨어 설정
 setup_middleware(app)
