@@ -2,15 +2,16 @@ import { getServerUrl } from '@/util/server';
 import { useState } from 'react';
 import type { ServerResponseMap } from '@/types/http/response';
 import type { ServerRequestMap } from '@/types/http/request';
+import { useLoading } from '@/hooks/useLoading';
 
 const usePost = <T extends keyof ServerResponseMap>(url: T) => {
   const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<ServerResponseMap[T] | null>(null);
+  const { setLoading } = useLoading();
 
   const post = async (body: ServerRequestMap[T]): Promise<ServerResponseMap[T]> => {
     setError(null);
-    setIsLoading(true);
+    setLoading(true);
     setResponse(null);
     try {
       const sessionId = localStorage.getItem('session_id');
@@ -36,11 +37,11 @@ const usePost = <T extends keyof ServerResponseMap>(url: T) => {
       setError(err instanceof Error ? err : new Error('알 수 없는 오류'));
       throw err;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  return { error, isLoading, response, post };
+  return { error, response, post };
 };
 
 export default usePost; 

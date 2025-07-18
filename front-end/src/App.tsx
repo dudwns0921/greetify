@@ -14,6 +14,8 @@ import useAppMount from './hooks/useAppMount';
 import MessagePortal from './components/MessagePortal/MessagePortal';
 import useUpload from './hooks/useUpload';
 import playCameraShutter from './util/playCameraShutter';
+import Loading from './components/Loading/Loading';
+import { useLoading } from './hooks/useLoading';
 
 const App: React.FC = () => {
   // 상태 선언
@@ -22,8 +24,9 @@ const App: React.FC = () => {
   const [isGreeting, setIsGreeting] = useState(false);
   const [webcamOpen, setWebcamOpen] = useState(false);
   const webcamRef = useRef<WebcamModalHandle>(null);
-
+  
   // 훅 선언
+  const { loading } = useLoading();
   const { post } = usePost('/greet-from-text');
   const { post: postLocation } = usePost('/save-current-location');
   const { upload: uploadImage } = useUpload('/greet-from-image');
@@ -81,6 +84,7 @@ const App: React.FC = () => {
   // 렌더링
   return (
     <div className={styles.container}>
+      {loading && <Loading />}
       {isFlash && <Flash />}
       <WebcamModal ref={webcamRef} open={webcamOpen} onClose={() => setWebcamOpen(false)} />
       <MessagePortal>
