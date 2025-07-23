@@ -1,0 +1,19 @@
+services:
+  frontend:
+    image: greetify-frontend:latest
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile.prod
+    ports:
+      - "5173:80"
+    restart: always
+
+  backend:
+    build:
+      context: ./back-end
+    image: greetify-backend:latest
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - ./back-end/.env

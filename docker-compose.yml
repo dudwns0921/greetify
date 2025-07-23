@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build:
+      context: ./front-end
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+
+  backend:
+    build:
+      context: ./back-end
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./back-end:/app
