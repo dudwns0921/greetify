@@ -3,7 +3,7 @@
 AI 기반 맞춤형 인사말 생성 서비스
 사용자의 얼굴 이미지, 감정, 나이, 위치, 날씨, 시간 등 다양한 정보를 바탕으로 상황에 맞는 인사말을 생성합니다.
 
-**https://greetifygroom.netlify.app/**
+**[https://elioground.com/greetify/](https://elioground.com/greetify/)**
 
 ---
 
