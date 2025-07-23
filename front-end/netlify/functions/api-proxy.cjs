@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 
+const SERVER_URL = 'http://158.179.167.189/greetify/api/v1';
+
 exports.handler = async (event) => {
   let path = event.path;
   if (path.startsWith('/.netlify/functions/api-proxy')) {
@@ -7,7 +9,7 @@ exports.handler = async (event) => {
   } else if (path.startsWith('/api')) {
     path = path.replace('/api', '');
   }
-  const url = `http://158.179.167.189:8000/api/v1${path}`;
+  const url = `${SERVER_URL}${path}`;
   console.log('프록시 요청 URL:', url);
 
   // Content-Length, host 등 일부 헤더는 제거

@@ -27,4 +27,8 @@ dist-ssr
 *.sw?
 .env
 
-*.db
+*.
+
+# 가상 환경 디렉터리, 로그 파일 제외
+venv/
+nohup.out
