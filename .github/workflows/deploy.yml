@@ -38,6 +38,20 @@ jobs:
         echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > ./back-end/.env
         echo "OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}" >> ./back-end/.env
 
+    - name: Verify .env file creation
+      run: |
+        echo "=== Checking .env file ==="
+        if [ -f "./back-end/.env" ]; then
+          echo "✅ .env file created successfully"
+          echo "File size: $(wc -c < ./back-end/.env) bytes"
+          echo "Number of lines: $(wc -l < ./back-end/.env)"
+          echo "Environment variables (keys only):"
+          grep -o '^[^=]*' ./back-end/.env || echo "No variables found"
+        else
+          echo "❌ .env file NOT found"
+          exit 1
+        fi
+
     - name: Build and push backend image
       uses: docker/build-push-action@v5
       with:
@@ -73,7 +87,7 @@ jobs:
           # 최신 이미지 pull
           echo "=== Pulling latest images ==="
           docker pull dudwns0921/greetify:frontend-latest
-          docker pull dudwns0921/greetify:backend-latest
+          # docker pull dudwns0921/greetify:backend-latest
 
           # 기존 컨테이너 중지
           echo "=== Stopping containers ==="
