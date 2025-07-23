@@ -33,15 +33,20 @@ jobs:
           dudwns0921/greetify:frontend-latest
           dudwns0921/greetify:frontend-${{ github.sha }}
 
-    # - name: Build and push backend image
-    #   uses: docker/build-push-action@v5
-    #   with:
-    #     context: ./back-end
-    #     file: ./back-end/Dockerfile.prod
-    #     push: true
-    #     tags: |
-    #       dudwns0921/greetify:backend-latest
-    #       dudwns0921/greetify:backend-${{ github.sha }}
+    - name: Create backend .env file
+      run: |
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > ./back-end/.env
+        echo "OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}" >> ./back-end/.env
+
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./back-end
+        file: ./back-end/Dockerfile.prod
+        push: true
+        tags: |
+          dudwns0921/greetify:backend-latest
+          dudwns0921/greetify:backend-${{ github.sha }}
 
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
@@ -68,7 +73,7 @@ jobs:
           # 최신 이미지 pull
           echo "=== Pulling latest images ==="
           docker pull dudwns0921/greetify:frontend-latest
-          # docker pull dudwns0921/greetify:backend-latest
+          docker pull dudwns0921/greetify:backend-latest
 
           # 기존 컨테이너 중지
           echo "=== Stopping containers ==="
