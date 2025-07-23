@@ -33,15 +33,15 @@ jobs:
           dudwns0921/greetify:frontend-latest
           dudwns0921/greetify:frontend-${{ github.sha }}
 
-    - name: Build and push backend image
-      uses: docker/build-push-action@v5
-      with:
-        context: ./back-end
-        file: ./back-end/Dockerfile.prod
-        push: true
-        tags: |
-          dudwns0921/greetify:backend-latest
-          dudwns0921/greetify:backend-${{ github.sha }}
+    # - name: Build and push backend image
+    #   uses: docker/build-push-action@v5
+    #   with:
+    #     context: ./back-end
+    #     file: ./back-end/Dockerfile.prod
+    #     push: true
+    #     tags: |
+    #       dudwns0921/greetify:backend-latest
+    #       dudwns0921/greetify:backend-${{ github.sha }}
 
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
